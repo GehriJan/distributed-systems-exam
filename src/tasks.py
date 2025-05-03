@@ -1,3 +1,4 @@
+# filepath: /Users/jannisgehring/code/distributed-systems-lecture/distributed-systems-exam/src/tasks.py
 # Import statements
 from celery import Celery
 from Crypto.Util import number
@@ -10,12 +11,11 @@ def randfunc(n):
 
 app = Celery("tasks", broker="redis://localhost:6379/0")
 
-PRIME_POOL = [number.getPrime(32, randfunc=randfunc) for _ in range(200)]  # Zahlenpool mit Primzahlen
+PRIME_POOL = [number.getPrime(32, randfunc=randfunc) for _ in range(100000)]  # Zahlenpool mit Primzahlen
 
 @app.task
 def factorize_rsa(e, n):
     print("Length of Prime Pool: " + str(len(PRIME_POOL)))
-    print(PRIME_POOL)
     for p in PRIME_POOL:
         if n % p == 0:
             q = n // p

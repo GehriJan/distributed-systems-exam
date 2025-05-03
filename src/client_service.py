@@ -1,10 +1,9 @@
-# Import statements
+# filepath: /Users/jannisgehring/code/distributed-systems-lecture/distributed-systems-exam/src/client_service.py
 from fastapi import FastAPI
 from pydantic import BaseModel
 from Crypto.Util import number
 import requests
 import random
-
 
 # Set random seed for reproducibility
 random.seed(42)
@@ -14,7 +13,7 @@ def randfunc(n):
 # Initialize FastAPI app
 app = FastAPI()
 
-NUMBERS_POOL = [number.getPrime(32, randfunc=randfunc) for _ in range(200)]  # Zahlenpool mit Primzahlen
+NUMBERS_POOL = [number.getPrime(32, randfunc=randfunc) for _ in range(10000)]  # Zahlenpool mit Primzahlen
 
 class RSAKeyResponse(BaseModel):
     public_key: int
@@ -26,7 +25,6 @@ def generate_key():
     n = p * q
     e = 65537
 
-    print(NUMBERS_POOL)
     # Send key to cluster
     print(requests.post("http://localhost:8001/factorize", json={"e": e, "n": n}))
 
