@@ -18,8 +18,7 @@ if [[ "$ROLE" != "master" && "$ROLE" != "node" ]]; then
     exit 1
 fi
 
-sudo apt update
-sudo apt install -y haproxy keepalived
+sudo apt install -y haproxy keepalived nodejs npm
 
 if ! grep -q "^net.ipv4.ip_nonlocal_bind = 1" /etc/sysctl.conf; then
     echo "net.ipv4.ip_nonlocal_bind = 1" | sudo tee -a /etc/sysctl.conf
@@ -100,8 +99,6 @@ sudo systemctl restart haproxy
 
 
 
-# Install Node.js and npm
-sudo apt install -y nodejs npm
 
 # Create a directory for the server
 if [[ ! -d "/home/student/rsa/server" ]]; then
@@ -132,6 +129,13 @@ EOF
 
 # Install dependencies
 npm install express crypto
+
+
+# Ensure no existing server.js process is running
+if pgrep -f "node .*server.js" > /dev/null; then
+    echo "Stopping existing server.js process..."
+    pkill -f "node .*server.js"
+fi
 
 # Start the server
 nohup node server.js > /home/student/rsa/server/server.log 2>&1 &
