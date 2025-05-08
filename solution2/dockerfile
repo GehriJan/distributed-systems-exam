@@ -1,0 +1,23 @@
+FROM rabbitmq:3.12-management
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    iputils-ping \
+    python3 \
+    python3-pip \
+    net-tools \
+    curl \
+    wget \
+    vim \
+    git \
+    keepalived \
+    && rm -rf /var/lib/apt/lists/*
+
+
+RUN pip install --no-cache-dir celery 
+COPY celery_worker.py start.sh ./
+COPY keepalived_node.conf /etc/keepalived/keepalived.conf
+RUN chmod +x start.sh
+
+
+CMD ["./start.sh"]

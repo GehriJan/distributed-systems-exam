@@ -1,0 +1,98 @@
+
+
+version: '3.8'
+
+networks:
+  mynet:
+    driver: macvlan
+    driver_opts:
+      parent: enp37s0
+    ipam:
+      config:
+        - subnet: 192.168.2.0/24
+          gateway: 192.168.2.1
+          ip_range:  192.168.2.0/24
+
+services:
+  
+  ubuntu:
+    build:
+        dockerfile: dockerfile-ubuntu
+    command: sleep infinity
+    container_name: ubuntu
+    stdin_open: true
+    tty: true
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+    networks:
+      mynet:
+        ipv4_address: 192.168.2.101
+
+  rabbit1:
+    build:
+      dockerfile: dockerfile-master
+    hostname: rabbit1
+    container_name: rabbit1
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "supersecretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit1
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+    networks:
+      mynet:
+        ipv4_address: 192.168.2.102
+
+  rabbit2:
+    build:
+      dockerfile: dockerfile
+    hostname: rabbit2
+    container_name: rabbit2
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "supersecretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit2
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+    networks:
+      mynet:
+        ipv4_address: 192.168.2.103
+
+  rabbit3:
+    build:
+      dockerfile: dockerfile
+    hostname: rabbit3
+    container_name: rabbit3
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "supersecretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit3
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+    networks:
+      mynet:
+        ipv4_address: 192.168.2.104
+
+  rabbit4:
+    build:
+      dockerfile: dockerfile
+    hostname: rabbit4
+    container_name: rabbit4
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "supersecretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit4
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+    networks:
+      mynet:
+        ipv4_address: 192.168.2.105
